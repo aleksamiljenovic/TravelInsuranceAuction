@@ -1,0 +1,24 @@
+﻿@model List<InsuranceRequest>
+
+<div class="container">
+    <div class="row pt-4 pb-3">
+        <div class="col-6">
+            <h2 class="text-primary">Moje Licitacije</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="InsuranceRequest" asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i>
+                Dodaj novu licitaciju
+            </a>
+        </div>
+    </div>
+    @foreach (var obj in Model)
+    {
+        <a asp-controller="InsuranceRequest" asp-action="Show">
+            <div class="bg-secondary text-light borde rounded-3">
+                <h3 class="p-4">@obj.Destination</h3>
+            </div>
+        </a>
+        
+    }
+</div>
