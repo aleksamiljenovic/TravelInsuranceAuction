@@ -6,7 +6,7 @@ namespace TravelInsuranceAuction.Models
     public class InsuranceRequest
     {
         [Key]
-        public int RequestId {  get; set; }
+        public int Id {  get; set; }
       
         [Required(ErrorMessage ="Izaberite lokaciju")]
         [DisplayName("Destinacija")]

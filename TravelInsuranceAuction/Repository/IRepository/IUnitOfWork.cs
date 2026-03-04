@@ -3,6 +3,7 @@
     public interface IUnitOfWork
     {
         IInsuranceRequestRepository InsuranceRequest { get; }
+        IAgencyRepository Agency { get; }
 
         void Save();
     }

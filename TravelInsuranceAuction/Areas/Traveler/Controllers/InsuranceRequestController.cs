@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TravelInsuranceAuction.Data;
 using TravelInsuranceAuction.Models;
 using TravelInsuranceAuction.Repository.IRepository;
+using TravelInsuranceAuction.Utility;
 
 namespace TravelInsuranceAuction.Areas.Traveler.Controllers
 {
     [Area("Traveler")]
+    [Authorize(Roles = SD.Role_Traveler)]
     public class InsuranceRequestController : Controller
     {
         

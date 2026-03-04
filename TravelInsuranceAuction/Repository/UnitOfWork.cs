@@ -8,6 +8,7 @@ namespace TravelInsuranceAuction.Repository
         private ApplicationDbContext _db;
 
         public IInsuranceRequestRepository InsuranceRequest {  get; private set; }
+        public IAgencyRepository Agency {  get; private set; }
 
         
 
@@ -15,6 +16,7 @@ namespace TravelInsuranceAuction.Repository
         {
             _db = db;
             InsuranceRequest = new InsuranceRequestRepository(db);
+            Agency = new AgencyRepository(db);
         }
 
         public void Save()

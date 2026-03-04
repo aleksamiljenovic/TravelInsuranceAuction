@@ -6,7 +6,7 @@ namespace TravelInsuranceAuction.Models
     public class Auction
     {
         [Key]
-        public int AuctionId { get; set; }
+        public int Id { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTIme { get; set; }
         public bool IsActive { get; set; }
