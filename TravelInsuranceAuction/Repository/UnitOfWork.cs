@@ -1,4 +1,5 @@
 ﻿using TravelInsuranceAuction.Data;
+using TravelInsuranceAuction.Models;
 using TravelInsuranceAuction.Repository.IRepository;
 
 namespace TravelInsuranceAuction.Repository
@@ -9,14 +10,18 @@ namespace TravelInsuranceAuction.Repository
 
         public IInsuranceRequestRepository InsuranceRequest {  get; private set; }
         public IAgencyRepository Agency {  get; private set; }
+        public IAutoBiddingSettingRepository AutoBiddingSetting {  get; private set; }
+        public IApplicationUserRepository ApplicationUser {  get; private set; }
 
         
 
         public UnitOfWork(ApplicationDbContext db)
         {
             _db = db;
-            InsuranceRequest = new InsuranceRequestRepository(db);
-            Agency = new AgencyRepository(db);
+            InsuranceRequest = new InsuranceRequestRepository(_db);
+            Agency = new AgencyRepository(_db);
+            AutoBiddingSetting = new AutoBiddingSettingRepository(_db);
+            ApplicationUser = new ApplicationUserRepository(_db);
         }
 
         public void Save()

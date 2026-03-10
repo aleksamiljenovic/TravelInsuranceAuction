@@ -17,6 +17,7 @@ namespace TravelInsuranceAuction.Data
         public DbSet<InsuranceRequest> InsuranceRequests { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Agency> Agencies { get; set; }
+        public DbSet<AutoBiddingSetting> AutoBiddingSettings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

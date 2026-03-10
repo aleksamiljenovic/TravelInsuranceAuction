@@ -4,6 +4,8 @@
     {
         IInsuranceRequestRepository InsuranceRequest { get; }
         IAgencyRepository Agency { get; }
+        IAutoBiddingSettingRepository AutoBiddingSetting { get; }
+        IApplicationUserRepository ApplicationUser { get; }
 
         void Save();
     }

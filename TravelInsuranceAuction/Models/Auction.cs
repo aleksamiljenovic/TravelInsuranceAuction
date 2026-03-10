@@ -13,6 +13,6 @@ namespace TravelInsuranceAuction.Models
         public int RequestId { get; set; }
         [ForeignKey("RequestId")]
         public InsuranceRequest InsuranceRequest { get; set; }
-        public ICollection<Offer> Offers { get; set; }
+        public ICollection<Offer>? Offers { get; set; }
     }
 }

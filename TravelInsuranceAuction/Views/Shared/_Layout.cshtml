@@ -30,6 +30,12 @@
                                 <a class="nav-link text-white" asp-area="Traveler" asp-controller="InsuranceRequest" asp-action="Index">Licitacije</a>
                             </li>
                         }
+                        @if (User.IsInRole(SD.Role_Agency))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="Agency" asp-controller="AutoBiddingSetting" asp-action="Index">Pravila licitacije</a>
+                            </li>
+                        }
                         
                         
                     </ul>
