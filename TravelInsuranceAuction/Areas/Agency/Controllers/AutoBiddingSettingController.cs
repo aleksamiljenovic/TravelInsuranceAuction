@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Configuration;
@@ -6,22 +7,20 @@ using System.Security.Claims;
 using TravelInsuranceAuction.Data;
 using TravelInsuranceAuction.Models;
 using TravelInsuranceAuction.Repository.IRepository;
+using TravelInsuranceAuction.Utility;
 
 namespace TravelInsuranceAuction.Areas.Agency.Controllers
 {
     [Area("Agency")]
+    [Authorize(Roles = SD.Role_Agency)]
     public class AutoBiddingSettingController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ApplicationDbContext _context;
 
 
-        public AutoBiddingSettingController(
-            IUnitOfWork unitOfWork,
-            ApplicationDbContext context)
+        public AutoBiddingSettingController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _context = context;
             
         }
 
@@ -38,8 +37,7 @@ namespace TravelInsuranceAuction.Areas.Agency.Controllers
 
             var settings = _unitOfWork.AutoBiddingSetting.Get(u=>u.AgencyId==user.AgencyId);
 
-            //var settings = await _context.AutoBiddingSettings
-            //    .FirstOrDefaultAsync(x => x.AgencyId == user.AgencyId);
+           
 
             if (settings == null)
             {
@@ -88,17 +86,27 @@ namespace TravelInsuranceAuction.Areas.Agency.Controllers
 
         public IActionResult Edit(int? id)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
+
+            
+
             if (id == null || id == 0)
             {
                 return NotFound();
             }
             AutoBiddingSetting? autoBiddingFromDb = _unitOfWork.AutoBiddingSetting.Get(u => u.Id == id);
             
-            if (autoBiddingFromDb == null)
+            if (autoBiddingFromDb != null)
             {
-                return NotFound();
+                if (autoBiddingFromDb.AgencyId == user.AgencyId)
+                {
+                    return View(autoBiddingFromDb);
+                }
+                else return Forbid();
             }
-            return View(autoBiddingFromDb);
+            else return NotFound();
+            
         }
         [HttpPost]
         public IActionResult Edit(AutoBiddingSetting obj)

@@ -12,6 +12,8 @@ namespace TravelInsuranceAuction.Repository
         public IAgencyRepository Agency {  get; private set; }
         public IAutoBiddingSettingRepository AutoBiddingSetting {  get; private set; }
         public IApplicationUserRepository ApplicationUser {  get; private set; }
+        public IAuctionRepository Auction {  get; private set; }
+        public IOfferRepository Offer {  get; private set; }
 
         
 
@@ -22,6 +24,8 @@ namespace TravelInsuranceAuction.Repository
             Agency = new AgencyRepository(_db);
             AutoBiddingSetting = new AutoBiddingSettingRepository(_db);
             ApplicationUser = new ApplicationUserRepository(_db);
+            Auction = new AuctionRepository(_db);
+            Offer = new OfferRepository(_db);
         }
 
         public void Save()

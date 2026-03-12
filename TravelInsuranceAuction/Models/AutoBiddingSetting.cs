@@ -11,16 +11,16 @@ namespace TravelInsuranceAuction.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Upišite početnu cenu")]
-        [DisplayName("Početna cena")]
+        [DisplayName("Početna cena u €")]
         public double DefaultStartPrice { get; set; }
 
         [Required(ErrorMessage = "Upišite minimalnu cenu")]
-        [DisplayName("Minimalna cena")]
+        [DisplayName("Minimalna cena u €")]
         public double DefaultMinPrice { get; set; }
 
         [Required(ErrorMessage = "Upišite procenat smanjenja")]
         [DisplayName("Procenat smanjenja")]
-        public double DecreasePercentage  { get; set; }
+        public double PriceDecrease  { get; set; }
 
         [Required(ErrorMessage = "Upišite vreme za koje će se cena smanjiti")]
         [DisplayName("Interval smanjivanja")]
@@ -31,7 +31,7 @@ namespace TravelInsuranceAuction.Models
         public int? AgencyId { get; set; }
         [ForeignKey("AgencyId")]
         [ValidateNever]
-        public Agency Agency { get; set; }
+        public IncuranceAgency Agency { get; set; }
 
     }
 }

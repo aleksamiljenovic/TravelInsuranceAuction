@@ -2,7 +2,7 @@
 
 namespace TravelInsuranceAuction.Models
 {
-    public class Agency
+    public class IncuranceAgency
     {
         [Key]
         public int Id { get; set; }

@@ -2,8 +2,8 @@
 
 namespace TravelInsuranceAuction.Repository.IRepository
 {
-    public interface IAgencyRepository:IRepository<IncuranceAgency>
+    public interface IAuctionRepository : IRepository<Auction>
     {
-        void Update(IncuranceAgency obj);
+        void Update(Auction obj);
     }
 }

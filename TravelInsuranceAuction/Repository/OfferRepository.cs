@@ -1,21 +1,20 @@
 ﻿using TravelInsuranceAuction.Data;
 using TravelInsuranceAuction.Models;
 using TravelInsuranceAuction.Repository.IRepository;
-
 namespace TravelInsuranceAuction.Repository
 {
-    public class AgencyRepository: Repository<IncuranceAgency>,IAgencyRepository
+    public class OfferRepository : Repository<Offer>, IOfferRepository 
     {
         private ApplicationDbContext _db;
 
-        public AgencyRepository(ApplicationDbContext db) : base(db) 
+        public OfferRepository(ApplicationDbContext db) : base(db)
         {
             _db = db;
         }
 
-        public void Update(IncuranceAgency obj)
+        public void Update(Offer obj)
         {
-            _db.Agencies.Update(obj);
+            _db.Offers.Update(obj);
         }
     }
 }

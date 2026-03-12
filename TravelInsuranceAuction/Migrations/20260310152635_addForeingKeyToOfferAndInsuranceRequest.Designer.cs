@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TravelInsuranceAuction.Data;
 
@@ -11,9 +12,11 @@ using TravelInsuranceAuction.Data;
 namespace TravelInsuranceAuction.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260310152635_addForeingKeyToOfferAndInsuranceRequest")]
+    partial class addForeingKeyToOfferAndInsuranceRequest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -229,67 +232,7 @@ namespace TravelInsuranceAuction.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("TravelInsuranceAuction.Models.Auction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("RequestId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RequestId");
-
-                    b.ToTable("Auctions");
-                });
-
-            modelBuilder.Entity("TravelInsuranceAuction.Models.AutoBiddingSetting", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("AgencyId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("DefaultMinPrice")
-                        .HasColumnType("float");
-
-                    b.Property<double>("DefaultStartPrice")
-                        .HasColumnType("float");
-
-                    b.Property<int>("LoweringTime")
-                        .HasColumnType("int");
-
-                    b.Property<double>("PriceDecrease")
-                        .HasColumnType("float");
-
-                    b.Property<string>("SpecialConditions")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AgencyId");
-
-                    b.ToTable("AutoBiddingSettings");
-                });
-
-            modelBuilder.Entity("TravelInsuranceAuction.Models.IncuranceAgency", b =>
+            modelBuilder.Entity("TravelInsuranceAuction.Models.Agency", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -319,7 +262,7 @@ namespace TravelInsuranceAuction.Migrations
                         {
                             Id = 1,
                             City = "Beograd",
-                            Name = "Generali",
+                            Name = "ArgusTours",
                             PhoneNumber = "1234567890",
                             StreetAddress = "Kneza Milosa 18"
                         },
@@ -327,7 +270,7 @@ namespace TravelInsuranceAuction.Migrations
                         {
                             Id = 2,
                             City = "Beograd",
-                            Name = "Dunav osiguranje",
+                            Name = "VivaTravel",
                             PhoneNumber = "1234567890",
                             StreetAddress = "Nehruova 44"
                         },
@@ -335,10 +278,70 @@ namespace TravelInsuranceAuction.Migrations
                         {
                             Id = 3,
                             City = "Beograd",
-                            Name = "Wiener",
+                            Name = "Travellino",
                             PhoneNumber = "1234567890",
                             StreetAddress = "Milutina Milankovica 23"
                         });
+                });
+
+            modelBuilder.Entity("TravelInsuranceAuction.Models.Auction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("EndTIme")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("RequestId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RequestId");
+
+                    b.ToTable("Auctions");
+                });
+
+            modelBuilder.Entity("TravelInsuranceAuction.Models.AutoBiddingSetting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AgencyId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("DecreasePercentage")
+                        .HasColumnType("float");
+
+                    b.Property<double>("DefaultMinPrice")
+                        .HasColumnType("float");
+
+                    b.Property<double>("DefaultStartPrice")
+                        .HasColumnType("float");
+
+                    b.Property<int>("LoweringTime")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SpecialConditions")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AgencyId");
+
+                    b.ToTable("AutoBiddingSettings");
                 });
 
             modelBuilder.Entity("TravelInsuranceAuction.Models.InsuranceRequest", b =>
@@ -370,6 +373,32 @@ namespace TravelInsuranceAuction.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("InsuranceRequests");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Destination = "London",
+                            EndDate = new DateOnly(2026, 3, 10),
+                            NumberOfTravelers = 2,
+                            StartDate = new DateOnly(2026, 3, 10)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Destination = "Paris",
+                            EndDate = new DateOnly(2026, 3, 10),
+                            NumberOfTravelers = 2,
+                            StartDate = new DateOnly(2026, 3, 10)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Destination = "Lisabon",
+                            EndDate = new DateOnly(2026, 3, 10),
+                            NumberOfTravelers = 4,
+                            StartDate = new DateOnly(2026, 3, 10)
+                        });
                 });
 
             modelBuilder.Entity("TravelInsuranceAuction.Models.Offer", b =>
@@ -389,10 +418,10 @@ namespace TravelInsuranceAuction.Migrations
                     b.Property<string>("Conditions")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("CurrentPrice")
+                    b.Property<double>("CurrentPrice")
                         .HasColumnType("float");
 
-                    b.Property<double?>("InitialPrice")
+                    b.Property<double>("InitialPrice")
                         .HasColumnType("float");
 
                     b.HasKey("Id");
@@ -494,7 +523,7 @@ namespace TravelInsuranceAuction.Migrations
 
             modelBuilder.Entity("TravelInsuranceAuction.Models.AutoBiddingSetting", b =>
                 {
-                    b.HasOne("TravelInsuranceAuction.Models.IncuranceAgency", "Agency")
+                    b.HasOne("TravelInsuranceAuction.Models.Agency", "Agency")
                         .WithMany()
                         .HasForeignKey("AgencyId");
 
@@ -512,36 +541,34 @@ namespace TravelInsuranceAuction.Migrations
 
             modelBuilder.Entity("TravelInsuranceAuction.Models.Offer", b =>
                 {
-                    b.HasOne("TravelInsuranceAuction.Models.IncuranceAgency", "Agency")
+                    b.HasOne("TravelInsuranceAuction.Models.Agency", "Agency")
                         .WithMany()
                         .HasForeignKey("AgencyId");
 
-                    b.HasOne("TravelInsuranceAuction.Models.Auction", "Auction")
+                    b.HasOne("TravelInsuranceAuction.Models.Auction", null)
                         .WithMany("Offers")
                         .HasForeignKey("AuctionId");
 
                     b.Navigation("Agency");
-
-                    b.Navigation("Auction");
                 });
 
             modelBuilder.Entity("TravelInsuranceAuction.Models.ApplicationUser", b =>
                 {
-                    b.HasOne("TravelInsuranceAuction.Models.IncuranceAgency", "Agency")
+                    b.HasOne("TravelInsuranceAuction.Models.Agency", "Agency")
                         .WithMany("Users")
                         .HasForeignKey("AgencyId");
 
                     b.Navigation("Agency");
                 });
 
+            modelBuilder.Entity("TravelInsuranceAuction.Models.Agency", b =>
+                {
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("TravelInsuranceAuction.Models.Auction", b =>
                 {
                     b.Navigation("Offers");
-                });
-
-            modelBuilder.Entity("TravelInsuranceAuction.Models.IncuranceAgency", b =>
-                {
-                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

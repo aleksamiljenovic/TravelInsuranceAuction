@@ -28,6 +28,6 @@ namespace TravelInsuranceAuction.Models
         public int? AgencyId { get; set; }
         [ForeignKey("AgencyId")]
         [ValidateNever]
-        public Agency Agency { get; set; }
+        public IncuranceAgency Agency { get; set; }
     }
 }

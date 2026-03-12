@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TravelInsuranceAuction.Data;
 
@@ -11,9 +12,11 @@ using TravelInsuranceAuction.Data;
 namespace TravelInsuranceAuction.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260312104705_databaseReset")]
+    partial class databaseReset
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -237,7 +240,7 @@ namespace TravelInsuranceAuction.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("EndTime")
+                    b.Property<DateTime>("EndTIme")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
@@ -267,6 +270,9 @@ namespace TravelInsuranceAuction.Migrations
                     b.Property<int?>("AgencyId")
                         .HasColumnType("int");
 
+                    b.Property<double>("DecreasePercentage")
+                        .HasColumnType("float");
+
                     b.Property<double>("DefaultMinPrice")
                         .HasColumnType("float");
 
@@ -275,9 +281,6 @@ namespace TravelInsuranceAuction.Migrations
 
                     b.Property<int>("LoweringTime")
                         .HasColumnType("int");
-
-                    b.Property<double>("PriceDecrease")
-                        .HasColumnType("float");
 
                     b.Property<string>("SpecialConditions")
                         .HasColumnType("nvarchar(max)");
@@ -389,10 +392,10 @@ namespace TravelInsuranceAuction.Migrations
                     b.Property<string>("Conditions")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("CurrentPrice")
+                    b.Property<double>("CurrentPrice")
                         .HasColumnType("float");
 
-                    b.Property<double?>("InitialPrice")
+                    b.Property<double>("InitialPrice")
                         .HasColumnType("float");
 
                     b.HasKey("Id");
@@ -516,13 +519,11 @@ namespace TravelInsuranceAuction.Migrations
                         .WithMany()
                         .HasForeignKey("AgencyId");
 
-                    b.HasOne("TravelInsuranceAuction.Models.Auction", "Auction")
+                    b.HasOne("TravelInsuranceAuction.Models.Auction", null)
                         .WithMany("Offers")
                         .HasForeignKey("AuctionId");
 
                     b.Navigation("Agency");
-
-                    b.Navigation("Auction");
                 });
 
             modelBuilder.Entity("TravelInsuranceAuction.Models.ApplicationUser", b =>

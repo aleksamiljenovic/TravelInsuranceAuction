@@ -16,62 +16,37 @@ namespace TravelInsuranceAuction.Data
         }
         public DbSet<InsuranceRequest> InsuranceRequests { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        public DbSet<Agency> Agencies { get; set; }
+        public DbSet<IncuranceAgency> Agencies { get; set; }
         public DbSet<AutoBiddingSetting> AutoBiddingSettings { get; set; }
+        public DbSet<Auction> Auctions { get; set; }
+        public DbSet<Offer> Offers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<InsuranceRequest>().HasData(
-                 new InsuranceRequest
-                 {
-                     Id = 1,
-                     Destination = "London",
-                     NumberOfTravelers = 2,
-                     StartDate = DateOnly.FromDateTime(DateTime.Today),
-                     EndDate = DateOnly.FromDateTime(DateTime.Today)
-                 },
-                     new InsuranceRequest
-                     {
-                         Id = 2,
-                         Destination = "Paris",
-                         NumberOfTravelers = 2,
-                         StartDate = DateOnly.FromDateTime(DateTime.Today),
-                         EndDate = DateOnly.FromDateTime(DateTime.Today)
-                     },
-                      new InsuranceRequest
-                      {
-                          Id = 3,
-                          Destination = "Lisabon",
-                          NumberOfTravelers = 4,
-                          StartDate = DateOnly.FromDateTime(DateTime.Today),
-                          EndDate = DateOnly.FromDateTime(DateTime.Today)
-                      }
-                );
-
-            modelBuilder.Entity<Agency>().HasData(
-                new Agency
+            modelBuilder.Entity<IncuranceAgency>().HasData(
+                new IncuranceAgency
                 {
                     Id = 1,
-                    Name = "ArgusTours",
+                    Name = "Generali",
                     City = "Beograd",
                     PhoneNumber = "1234567890",
                     StreetAddress = "Kneza Milosa 18"
                 },
-                new Agency
+                new IncuranceAgency
                 {
                     Id = 2,
-                    Name = "VivaTravel",
+                    Name = "Dunav osiguranje",
                     City = "Beograd",
                     PhoneNumber = "1234567890",
                     StreetAddress = "Nehruova 44"
                 },
-                new Agency
+                new IncuranceAgency
                 {
                     Id = 3,
-                    Name = "Travellino",
+                    Name = "Wiener",
                     City = "Beograd",
                     PhoneNumber = "1234567890",
                     StreetAddress = "Milutina Milankovica 23"

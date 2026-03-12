@@ -1,5 +1,7 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TravelInsuranceAuction.Models
 {
@@ -25,7 +27,11 @@ namespace TravelInsuranceAuction.Models
         [DisplayName("Broj putnika")]
         public int? NumberOfTravelers {  get; set; }
 
-        
+        public string? UserId { get; set; }
+        [ForeignKey("UserId")]
+        [ValidateNever]
+        public ApplicationUser ApplicationUser { get; set; }
+
 
     }
 }

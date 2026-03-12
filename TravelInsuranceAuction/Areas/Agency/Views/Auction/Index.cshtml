@@ -1,0 +1,35 @@
+﻿@model List<AuctionVM>
+
+<div class="container">
+    <div class="row pt-4 pb-3">
+        <div class="col-6">
+            <h2 class="text-primary">Aktivne licitacije</h2>
+        </div>
+    </div>
+
+    <div class="text-light borde rounded-3">
+        <table class="table text-dark">
+            <thead>
+                <tr>
+                    <th>Destinacija</th>
+                    <th>Pocetak licitacije</th>
+                    <th>Kraj licitacije</th>
+
+                </tr>
+            </thead>
+            @foreach (var obj in Model)
+            {
+                <tbody>
+                    <tr>
+                        <td>@obj.Destination</td>
+                        <td>@obj.StartTime</td>
+                        <td>@obj.EndTime</td>
+
+                    </tr>
+                </tbody>
+
+            }
+        </table>
+    </div>
+
+</div>
