@@ -1,16 +1,20 @@
 ﻿using System.Diagnostics;
 using System.Security.Cryptography;
 using TravelInsuranceAuction.Data;
+using Microsoft.AspNetCore.SignalR;
+using TravelInsuranceAuction.Hubs;
 
 namespace TravelInsuranceAuction.Services
 {
     public class PriceDecreaseService : BackgroundService
     {
         private readonly IServiceScopeFactory _scopeFactory;
+        private readonly IHubContext<PriceHub> _hubContext;
 
-        public PriceDecreaseService(IServiceScopeFactory scopeFactory)
+        public PriceDecreaseService(IServiceScopeFactory scopeFactory, IHubContext<PriceHub> hubContext)
         {
             _scopeFactory = scopeFactory;
+            _hubContext = hubContext;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -39,17 +43,30 @@ namespace TravelInsuranceAuction.Services
                             if (autoBid == null)
                                 continue;
 
-                            //var timeSinceLast = DateTime.Now - offer.LastPriceDecrease;
-                            //if (timeSinceLast.TotalSeconds < autoBid.IntervalSeconds)
-                            //    continue; // još nije vreme za sledeće smanjenje
+                            if (offer.LastPriceDecrease == null)
+                            {
+                                offer.LastPriceDecrease = DateTime.Now;
+                                continue;
+                            }
+
+                            var timeSinceLast = DateTime.Now - offer.LastPriceDecrease.Value;
+
+                            if (timeSinceLast.Minutes < autoBid.LoweringTime)
+                                continue; // još nije vreme za sledeće smanjenje
 
 
                             var newPrice = offer.CurrentPrice - autoBid.PriceDecrease;
 
-                            //offer.LastPriceDecrease = DateTime.Now;
+                            offer.LastPriceDecrease = DateTime.Now;
                             if (newPrice >= autoBid.DefaultMinPrice)
                                 offer.CurrentPrice = newPrice;
-                            
+
+                            await _hubContext.Clients.All.SendAsync(
+                            "PriceUpdated",
+                            offer.Id,
+                            offer.CurrentPrice
+                            );
+
                         }
                     }
 

@@ -25,21 +25,31 @@
                     <th>Pocetna cena</th>
                     <th>Trenutna cena</th>
                     <th>Pokrice</th>
-
+                    <th></th>
                 </tr>
             </thead>
-            @foreach (var obj in Model.Offers)
+            <tbody>
+            @foreach (var obj in Model.Offers.OrderBy(o => o.CurrentPrice))
             {
-                <tbody>
+               
                     <tr>
                         <td>@obj.AgencyName</td>
                         <td>@obj.InitialPrice</td>
-                        <td>@obj.CurrentPrice</td>
+                        <td><span id="price-@obj.Id">@obj.CurrentPrice €</span></td>
                         <td>@obj.Conditions</td>
+                        <td>
+                            <form asp-action="SelectOffer" method="post">
+                                <input type="hidden" name="offerId" value="@obj.Id" />
 
+                                <button type="submit" class="btn btn-success">
+                                    Izaberi ponudu
+                                </button>
+                            </form>
+                        </td>
                     </tr>
-                </tbody>
+                
             }
+                </tbody>
         </table>
     </div>
 
@@ -67,4 +77,52 @@
             hours + "h " + minutes + "m " + seconds + "s";
 
     }, 1000);
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+@* <script>
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/priceHub")
+        .build();
+
+    connection.on("PriceUpdated", function (offerId, newPrice) {
+
+        const element = document.getElementById("price-" + offerId);
+
+        if (element) {
+            element.innerText = newPrice + " €";
+        }
+
+    });
+
+    connection.start();
+
+</script> *@
+<script>
+
+    var connection = new signalR.HubConnectionBuilder()
+        .withUrl("/priceHub")
+        .build();
+
+    connection.start().then(function () {
+        connection.invoke("JoinAuctionGroup", @Model.AuctionId);
+    });
+
+    connection.on("PriceUpdated", function (offerId, newPrice) {
+
+        var element = document.getElementById("price-" + offerId);
+
+        if (element)
+            element.innerText = newPrice;
+
+    });
+
+    connection.on("AuctionFinished", function (offerId) {
+
+        alert("Aukcija je završena!");
+
+        location.reload();
+
+    });
+
 </script>

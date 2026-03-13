@@ -4,6 +4,7 @@ namespace TravelInsuranceAuction.ViewModels
 {
     public class OfferVM
     {
+        public int? Id { get; set; }
         public string? AgencyName { get; set; }
         public double? InitialPrice { get; set; }
         public double? CurrentPrice { get; set; }

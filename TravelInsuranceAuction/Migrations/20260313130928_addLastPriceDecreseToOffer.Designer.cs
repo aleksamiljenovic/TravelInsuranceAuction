@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TravelInsuranceAuction.Data;
 
@@ -11,9 +12,11 @@ using TravelInsuranceAuction.Data;
 namespace TravelInsuranceAuction.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260313130928_addLastPriceDecreseToOffer")]
+    partial class addLastPriceDecreseToOffer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -395,7 +398,7 @@ namespace TravelInsuranceAuction.Migrations
                     b.Property<double?>("InitialPrice")
                         .HasColumnType("float");
 
-                    b.Property<DateTime?>("LastPriceDecrease")
+                    b.Property<DateTime>("LastPriceDecrease")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");

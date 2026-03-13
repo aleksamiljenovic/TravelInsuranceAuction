@@ -1,0 +1,31 @@
+﻿@model PaymentVM
+
+<div class="container mt-5 col-6">
+
+    <h2 class="text-primary mb-4 text-center">Plaćanje osiguranja</h2>
+
+    <div class="card p-4 shadow text-center">
+
+        <h4>Agencija: @Model.AgencyName</h4>
+
+        <p><strong>Destinacija:</strong> @Model.Destination</p>
+        <p><strong>Datum polaska:</strong> @Model.StartDate</p>
+        <p><strong>Datum povratka:</strong> @Model.EndDate</p>
+
+        <hr />
+
+        <h3 class="text-success">Cena: @Model.Price €</h3>
+
+        <form asp-action="ConfirmPayment" method="post">
+
+            <input type="hidden" name="offerId" value="@Model.OfferId" />
+
+            <button type="submit" class="btn btn-success mt-3">
+                Plati
+            </button>
+
+        </form>
+
+    </div>
+
+</div>

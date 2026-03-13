@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using System.Security.Claims;
 using TravelInsuranceAuction.Data;
+using TravelInsuranceAuction.Hubs;
 using TravelInsuranceAuction.Models;
 using TravelInsuranceAuction.Repository.IRepository;
 using TravelInsuranceAuction.Utility;
@@ -18,10 +20,12 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
 
 
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IHubContext<PriceHub> _hubContext;
 
-        public InsuranceRequestController(IUnitOfWork unitOfWork)
+        public InsuranceRequestController(IUnitOfWork unitOfWork, IHubContext<PriceHub> hubContext)
         {
             _unitOfWork = unitOfWork;
+            _hubContext = hubContext;
         }
 
 
@@ -30,6 +34,7 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             List<InsuranceRequest> objInsuranceRequest = _unitOfWork.InsuranceRequest.GetAll().Where(u => u.UserId == userId).ToList();
+
             return View(objInsuranceRequest);
 
         }
@@ -98,10 +103,10 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
 
         public IActionResult Show(int id)
         {
-            
-            var request = _unitOfWork.InsuranceRequest.Get(r=>r.Id == id);
 
-            if(request == null)
+            var request = _unitOfWork.InsuranceRequest.Get(r => r.Id == id);
+
+            if (request == null)
                 return NotFound();
 
 
@@ -127,6 +132,7 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
                     var auction = _unitOfWork.Auction.Get(a => a.Id == o.AuctionId);
                     return new OfferVM
                     {
+                        Id = o.Id,
                         AgencyName = agency != null ? agency.Name : "Nepoznata agencija",
                         InitialPrice = o.InitialPrice,
                         CurrentPrice = o.CurrentPrice,
@@ -156,6 +162,34 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
                 return View(model);
             }
 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SelectOffer(int offerId)
+        {
+            var offer = _unitOfWork.Offer.Get(o => o.Id == offerId);
+
+            if (offer == null)
+                return NotFound();
+
+            var auction = _unitOfWork.Auction.Get(a => a.Id == offer.AuctionId);
+
+            if (auction == null)
+                return NotFound();
+
+            if (!auction.IsActive)
+                return BadRequest("Aukcija je već završena.");
+
+            auction.IsActive = false;
+
+            _unitOfWork.Auction.Update(auction);
+            _unitOfWork.Save();
+
+            // SignalR obaveštava sve
+            await _hubContext.Clients.Group($"auction-{auction.Id}")
+                .SendAsync("AuctionFinished", offer.Id);
+
+            return RedirectToAction("Payment", "Payment", new { offerId = offer.Id });
         }
     }
 }
