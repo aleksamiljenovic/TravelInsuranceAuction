@@ -1,0 +1,49 @@
+﻿@model AgencyStatisticsVM
+
+<div class="container mt-4">
+    <h2 class="text-primary mb-4">Statistika agencije: @Model.AgencyName</h2>
+
+    <div class="row text-center">
+        <div class="col-md-4">
+            <div class="card border-success mb-3">
+                <div class="card-header bg-success text-white">Pobede</div>
+                <div class="card-body">
+                    <h1 class="text-success">@Model.Won</h1>
+                    <p class="text-muted">aukcija pobedeno</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-danger mb-3">
+                <div class="card-header bg-danger text-white">Porazi</div>
+                <div class="card-body">
+                    <h1 class="text-danger">@Model.Lost</h1>
+                    <p class="text-muted">aukcija izgubljeno</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-warning mb-3">
+                <div class="card-header bg-warning text-white">U toku</div>
+                <div class="card-body">
+                    <h1 class="text-warning">@Model.Pending</h1>
+                    <p class="text-muted">aukcija u toku</p>
+                </div>
+            </div>
+        </div>
+        <div class="row text-center mt-3">
+            <div class="col-md-12">
+                <div class="card border-primary mb-3">
+                    <div class="card-header bg-primary text-white">Ukupna zarada (nakon 10% provizije)</div>
+                    <div class="card-body">
+                        <h1 class="text-primary">@Model.TotalEarnings.ToString("F2") €</h1>
+                        <p class="text-muted">
+                            Bruto: @Model.GrossEarnings.ToString("F2") € —
+                            Provizija platforme (10%): @Model.PlatformFee.ToString("F2") €
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

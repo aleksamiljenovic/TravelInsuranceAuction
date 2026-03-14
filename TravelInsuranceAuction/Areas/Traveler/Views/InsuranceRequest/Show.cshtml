@@ -2,21 +2,25 @@
 
 <div class="container">
     <div class="row pt-4 pb-3">
-        <div class="col-6">
-            
-            <h1 class="text-primary">@Model.Destination</h1>
-            <h3>
-                Trajanje licitacije: 
-                @(Model.AuctionStartTime?.ToString("hh:mm tt") ?? "N/A") - 
-                @(Model.AuctionEndTime?.ToString("hh:mm tt") ?? "N/A")
-            </h3>
-            <h3 class="text-primary">Ponude:</h3>
-            <p>Kraj aukcije: @Model.AuctionEndTime</p>
+        <div class="col-12">
+            <div class="col-6">
+                <h1 class="text-primary">@Model.Destination</h1>
+                <h3>
+                    Trajanje licitacije:
+                    @(Model.AuctionStartTime?.ToString("hh:mm tt") ?? "N/A") -
+                    @(Model.AuctionEndTime?.ToString("hh:mm tt") ?? "N/A")
+                </h3>
+            </div>
+            <div class="col-6">
+                <p>Kraj aukcije: @Model.AuctionEndTime</p>
+            </div>
+
+
 
             <p>Preostalo vreme: <span id="timer"></span></p>
         </div>
     </div>
-
+    <h3 class="text-primary">Ponude:</h3>
     <div class="text-light borde rounded-3">
         <table class="table text-dark">
             <thead>
@@ -29,9 +33,9 @@
                 </tr>
             </thead>
             <tbody>
-            @foreach (var obj in Model.Offers.OrderBy(o => o.CurrentPrice))
-            {
-               
+                @foreach (var obj in Model.Offers.OrderBy(o => o.CurrentPrice))
+                {
+
                     <tr>
                         <td>@obj.AgencyName</td>
                         <td>@obj.InitialPrice</td>
@@ -47,82 +51,72 @@
                             </form>
                         </td>
                     </tr>
-                
-            }
-                </tbody>
+
+                }
+            </tbody>
         </table>
     </div>
 
 </div>
 
-<script>
-     var endTime = new Date("@Model.AuctionEndTime?.ToString("yyyy-MM-ddTHH:mm:ss")").getTime();
+@section Scripts{
+    <script>
+        var endTime = new Date("@Model.AuctionEndTime?.ToString("yyyy-MM-ddTHH:mm:ss")").getTime();
 
-    var timer = setInterval(function() {
+        var timer = setInterval(function() {
+            var now = new Date().getTime();
+            var distance = endTime - now;
 
-        var now = new Date().getTime();
-        var distance = endTime - now;
+            if (distance < 0) {
+                clearInterval(timer);
+                document.getElementById("timer").innerHTML = "Aukcija završena";
+                return;
+            }
 
-        if (distance < 0) {
-            clearInterval(timer);
-            document.getElementById("timer").innerHTML = "Aukcija završena";
-            return;
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("timer").innerHTML =
+                hours + "h " + minutes + "m " + seconds + "s";
+        }, 1000);
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
+    <script>
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("/priceHub")
+            .build();
+
+        connection.start().then(function () {
+            connection.invoke("JoinAuctionGroup", @Model.AuctionId);
+        });
+
+        connection.on("PriceUpdated", function (offerId, newPrice) {
+            const span = document.getElementById("price-" + offerId);
+            if (span) {
+                span.textContent = newPrice.toFixed(2) + " €";
+            }
+            sortTableByPrice();
+        });
+
+        connection.on("AuctionFinished", function () {
+            alert("Aukcija je završena!");
+            location.reload();
+        });
+
+        function sortTableByPrice() {
+            const tbody = document.querySelector("tbody");
+            const rows = Array.from(tbody.querySelectorAll("tr"));
+
+            rows.sort((a, b) => {
+                const priceA = parseFloat(a.querySelector("span[id^='price-']").textContent);
+                const priceB = parseFloat(b.querySelector("span[id^='price-']").textContent);
+                return priceA - priceB;
+            });
+
+            rows.forEach(row => tbody.appendChild(row));
         }
-
-        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        document.getElementById("timer").innerHTML =
-            hours + "h " + minutes + "m " + seconds + "s";
-
-    }, 1000);
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
-@* <script>
-
-    const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/priceHub")
-        .build();
-
-    connection.on("PriceUpdated", function (offerId, newPrice) {
-
-        const element = document.getElementById("price-" + offerId);
-
-        if (element) {
-            element.innerText = newPrice + " €";
-        }
-
-    });
-
-    connection.start();
-
-</script> *@
-<script>
-
-    var connection = new signalR.HubConnectionBuilder()
-        .withUrl("/priceHub")
-        .build();
-
-    connection.start().then(function () {
-        connection.invoke("JoinAuctionGroup", @Model.AuctionId);
-    });
-
-    connection.on("PriceUpdated", function (offerId, newPrice) {
-
-        var element = document.getElementById("price-" + offerId);
-
-        if (element)
-            element.innerText = newPrice;
-
-    });
-
-    connection.on("AuctionFinished", function (offerId) {
-
-        alert("Aukcija je završena!");
-
-        location.reload();
-
-    });
-
-</script>
+    </script>
+}

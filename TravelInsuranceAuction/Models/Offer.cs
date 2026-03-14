@@ -12,6 +12,7 @@ namespace TravelInsuranceAuction.Models
         public double CurrentPrice { get; set; } //double?
         public string? Conditions { get; set; }
         public DateTime? LastPriceDecrease { get; set; } //= DateTime.MinValue;
+        public bool? isWinning { get; set; }
         public int? AgencyId { get; set; }
         [ForeignKey("AgencyId")]
         [ValidateNever]

@@ -45,7 +45,7 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
             if (offer == null)
                 return NotFound();
 
-            // ovde možeš kasnije dodati PaymentStatus u bazu
+            
 
             return RedirectToAction("Success");
         }

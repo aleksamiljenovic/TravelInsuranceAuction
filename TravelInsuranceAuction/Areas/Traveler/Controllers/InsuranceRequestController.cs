@@ -33,10 +33,30 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
         public IActionResult Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            List<InsuranceRequest> objInsuranceRequest = _unitOfWork.InsuranceRequest.GetAll().Where(u => u.UserId == userId).ToList();
+
+            List<InsuranceRequest> objInsuranceRequest = _unitOfWork.InsuranceRequest
+                .GetAll()
+                .Where(u => u.UserId == userId &&
+                       _unitOfWork.Auction.GetAll()
+                       .Any(a => a.RequestId == u.Id && a.IsActive)).OrderByDescending(u => u.createdAt)
+                .ToList();
 
             return View(objInsuranceRequest);
 
+        }
+
+        public IActionResult ClosedAuctions()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            List<InsuranceRequest> objInsuranceRequest = _unitOfWork.InsuranceRequest
+                .GetAll()
+                .Where(u => u.UserId == userId &&
+                       _unitOfWork.Auction.GetAll()
+                       .Any(a => a.RequestId == u.Id && a.IsActive==false)).OrderByDescending(u => u.createdAt)
+                .ToList();
+
+            return View(objInsuranceRequest);
         }
 
 
@@ -177,9 +197,19 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
             if (auction == null)
                 return NotFound();
 
-            if (!auction.IsActive)
-                return BadRequest("Aukcija je već završena.");
+            //if (!auction.IsActive)
+            //{
+            //    return RedirectToAction("Bill", "Payment", new { offerId = offer.Id });
+            //}
 
+            var allOffers = _unitOfWork.Offer.GetAll().Where(o => o.AuctionId == auction.Id).ToList();
+            foreach (var o in allOffers)
+            {
+                o.isWinning = false;
+                _unitOfWork.Offer.Update(o);
+            }
+
+            offer.isWinning = true;
             auction.IsActive = false;
 
             _unitOfWork.Auction.Update(auction);
@@ -191,5 +221,7 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
 
             return RedirectToAction("Payment", "Payment", new { offerId = offer.Id });
         }
+
+
     }
 }

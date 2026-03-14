@@ -3,7 +3,7 @@
 <div class="container">
     <div class="row pt-4 pb-3">
         <div class="col-6">
-            <h2 class="text-primary">Aktivne licitacije</h2>
+            <h2 class="text-primary">Završene licitacije</h2>
         </div>
         <div class="col-6 text-end">
             <a asp-controller="InsuranceRequest" asp-action="Create" class="btn btn-primary">
@@ -15,7 +15,7 @@
     @if (Model == null || !Model.Any())
     {
         <div class="alert alert-info text-center">
-            Trenutno nema aktivnih licitacija.
+            Nema završenih licitacija
         </div>
     }
     else
@@ -39,11 +39,6 @@
                                 <td>@obj.Destination</td>
                                 <td>@obj.StartDate</td>
                                 <td>@obj.EndDate</td>
-                                <td>
-                                    <a class="btn btn-success" asp-controller="InsuranceRequest" asp-action="Show" asp-route-id="@obj.Id">
-                                        <i class="bi bi-list"></i>
-                                    </a>
-                                </td>
                             </tr>
                         }
                     </tbody>

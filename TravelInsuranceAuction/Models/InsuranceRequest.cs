@@ -26,6 +26,7 @@ namespace TravelInsuranceAuction.Models
         [Range(1,50,ErrorMessage ="Broj putnika mora biti izmedju 1 i 50")]
         [DisplayName("Broj putnika")]
         public int? NumberOfTravelers {  get; set; }
+        public DateTime createdAt { get; set; } = DateTime.Now;
 
         public string? UserId { get; set; }
         [ForeignKey("UserId")]
