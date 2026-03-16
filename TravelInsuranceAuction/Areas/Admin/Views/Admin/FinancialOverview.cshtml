@@ -1,0 +1,57 @@
+﻿@model AdminFinanceVM
+
+<div class="container mt-4">
+    <h2 class="text-primary mb-4">Finansijski pregled</h2>
+
+    <div class="row text-center mb-4">
+        <div class="col-md-4">
+            <div class="card border-primary mb-3">
+                <div class="card-header bg-primary text-white">Ukupan promet</div>
+                <div class="card-body">
+                    <h2 class="text-primary">@Model.TotalGross.ToString("F2") €</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-success mb-3">
+                <div class="card-header bg-success text-white">Zarada platforme (10%)</div>
+                <div class="card-body">
+                    <h2 class="text-success">@Model.TotalPlatformFee.ToString("F2") €</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-info mb-3">
+                <div class="card-header bg-info text-white">Završenih aukcija</div>
+                <div class="card-body">
+                    <h2 class="text-info">@Model.TotalAuctions</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="text-secondary mb-3">Pregled po agencijama</h4>
+    <table class="table table-striped text-dark">
+        <thead class="table-dark">
+            <tr>
+                <th>Agencija</th>
+                <th>Pobedenih aukcija</th>
+                <th>Bruto zarada</th>
+                <th>Provizija (10%)</th>
+                <th>Neto zarada</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var agency in Model.ByAgency)
+            {
+                <tr>
+                    <td>@agency.AgencyName</td>
+                    <td>@agency.AuctionsWon</td>
+                    <td>@agency.GrossEarnings.ToString("F2") €</td>
+                    <td class="text-danger">@agency.PlatformFee.ToString("F2") €</td>
+                    <td class="text-success">@agency.NetEarnings.ToString("F2") €</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

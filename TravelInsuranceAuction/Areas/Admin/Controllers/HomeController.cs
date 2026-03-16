@@ -16,7 +16,7 @@ namespace TravelInsuranceAuction.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("FinancialOverview","Admin");
         }
 
         public IActionResult Privacy()

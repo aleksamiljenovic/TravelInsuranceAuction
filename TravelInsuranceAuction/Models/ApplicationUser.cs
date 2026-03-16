@@ -22,7 +22,7 @@ namespace TravelInsuranceAuction.Models
 
         [DisplayName("Grad")]
         public string? City { get; set; }
-        //public bool? IsVerified { get; set; }
+        public bool IsVerified { get; set; }
 
 
         public int? AgencyId { get; set; }

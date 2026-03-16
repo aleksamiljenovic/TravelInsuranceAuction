@@ -1,0 +1,46 @@
+﻿@model List<AdminVM>
+
+<div class="container">
+    <div class="row pt-4 pb-3">
+        <div class="col-6">
+            <h2 class="text-primary">Neverifikovani korisnici</h2>
+        </div>
+    </div>
+
+    @foreach (var group in Model.GroupBy(a => a.AgencyName))
+    {
+        <h4 class="text-secondary mt-4">Osiguravajuca kuca: @group.Key</h4>
+        <div class="text-light rounded-3">
+            <table class="table text-dark">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Ime</th>
+                        <th>Prezime</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var obj in group)
+                    {
+                        <tr>
+                            <td>@obj.Email</td>
+                            <td>@obj.FirstName</td>
+                            <td>@obj.LastName</td>
+                            <td>
+                                <form asp-action="VerifyUser" method="post">
+                                    <input type="hidden" name="id" value="@obj.UserID" />
+
+                                    <button type="submit" class="btn btn-success">
+                                        Verifikuj
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+

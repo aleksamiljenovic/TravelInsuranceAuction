@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using TravelInsuranceAuction.Models;
 
 namespace TravelInsuranceAuction.Areas.Identity.Pages.Account
 {
@@ -21,11 +22,13 @@ namespace TravelInsuranceAuction.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, RoleManager<IdentityRole> roleManager)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _roleManager = roleManager;
         }
 
         /// <summary>
@@ -114,6 +117,16 @@ namespace TravelInsuranceAuction.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    var loggedUser = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
+                    var roles = await _signInManager.UserManager.GetRolesAsync(loggedUser);
+
+                    if (roles.Contains("Admin"))
+                        return RedirectToAction("Index", "Home", new { area = "Admin" });
+                    else if (roles.Contains("Agency"))
+                        return RedirectToAction("Index", "Home", new { area = "Agency" });
+                    else
+                        return RedirectToAction("Index", "Home", new { area = "Traveler" });
+
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }

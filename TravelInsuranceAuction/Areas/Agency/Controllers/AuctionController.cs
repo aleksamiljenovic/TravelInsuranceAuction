@@ -22,75 +22,97 @@ namespace TravelInsuranceAuction.Areas.Agency.Controllers
 
         public IActionResult Index()
         {
-
-            var auctions = _context.Auctions
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
+            if (user.IsVerified == false)
+            {
+                return RedirectToAction("NotVerified", "Home");
+            }
+            else
+            {
+                var auctions = _context.Auctions
         .Where(a => a.IsActive)
         .OrderByDescending(a => a.StartTime)
         .Include(a => a.InsuranceRequest)
         .ToList();
 
-            var model = auctions.Select(a => new AuctionVM
-            {
-                Destination = a.InsuranceRequest.Destination,
-                StartTime = a.StartTime,
-                EndTime = a.EndTime,
-            }).ToList();
+                var model = auctions.Select(a => new AuctionVM
+                {
+                    Destination = a.InsuranceRequest.Destination,
+                    StartTime = a.StartTime,
+                    EndTime = a.EndTime,
+                }).ToList();
 
-            return View(model);
+                return View(model);
+            }
+
+
 
         }
 
         public IActionResult ClosedAuctions()
         {
-
-            var auctions = _context.Auctions
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
+            if (user.IsVerified == false)
+            {
+                return RedirectToAction("NotVerified", "Home");
+            }
+            else
+            {
+                var auctions = _context.Auctions
         .Where(a => a.IsActive == false)
         .OrderByDescending(a => a.StartTime)
         .Include(a => a.InsuranceRequest)
         .ToList();
 
-            var model = auctions.Select(a => new AuctionVM
-            {
-                Destination = a.InsuranceRequest.Destination,
-                StartTime = a.StartTime,
-                EndTime = a.EndTime,
-            }).ToList();
+                var model = auctions.Select(a => new AuctionVM
+                {
+                    Destination = a.InsuranceRequest.Destination,
+                    StartTime = a.StartTime,
+                    EndTime = a.EndTime,
+                }).ToList();
 
-            return View(model);
+                return View(model);
+            }
+
+            
 
         }
         public IActionResult Statistics()
         {
-            
-            
-            //var agencyId = user.AgencyId;
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var user = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
             var agency = _unitOfWork.Agency.Get(a => a.Id == user.AgencyId);
             if (user == null || user.AgencyId == null)
                 return NotFound();
-
-            var offers = _unitOfWork.Offer
+            if (user.IsVerified == false)
+            {
+                return RedirectToAction("NotVerified", "Home");
+            }
+            else
+            {
+                var offers = _unitOfWork.Offer
                 .GetAll().Where(o => o.AgencyId == user.AgencyId)
                 .ToList();
-            var wonOffers = offers.Where(o => o.isWinning == true).ToList();
+                var wonOffers = offers.Where(o => o.isWinning == true).ToList();
 
 
-            var model = new AgencyStatisticsVM
-            {
-                AgencyName = user.Agency?.Name ?? "N/A",
-                Won = offers.Count(o => o.isWinning == true),
-                Lost = offers.Count(o => o.isWinning == false),
-                Pending = offers.Count(o => o.isWinning == null),
-                GrossEarnings = wonOffers.Sum(o => o.CurrentPrice),
-                PlatformFee = wonOffers.Sum(o => o.CurrentPrice) * 0.10,
-                TotalEarnings = wonOffers.Sum(o => o.CurrentPrice) * 0.90
+                var model = new AgencyStatisticsVM
+                {
+                    AgencyName = user.Agency?.Name ?? "N/A",
+                    Won = offers.Count(o => o.isWinning == true),
+                    Lost = offers.Count(o => o.isWinning == false),
+                    Pending = offers.Count(o => o.isWinning == null),
+                    GrossEarnings = wonOffers.Sum(o => o.CurrentPrice),
+                    PlatformFee = wonOffers.Sum(o => o.CurrentPrice) * 0.10,
+                    TotalEarnings = wonOffers.Sum(o => o.CurrentPrice) * 0.90
 
-            };
+                };
 
-            return View(model);
-
+                return View(model);
+            }
 
         }
 

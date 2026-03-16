@@ -175,6 +175,11 @@ namespace TravelInsuranceAuction.Areas.Identity.Pages.Account
                 if (Input.Role == SD.Role_Agency)
                 {
                     user.AgencyId = Input.AgencyId;
+                    user.IsVerified = false;
+                }
+                else
+                {
+                    user.IsVerified= true;
                 }
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
