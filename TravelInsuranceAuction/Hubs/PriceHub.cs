@@ -7,5 +7,9 @@ namespace TravelInsuranceAuction.Hubs
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, $"auction-{auctionId}");
         }
+        public async Task JoinAgencyGroup()
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, "Agencies");
+        }
     }
 }

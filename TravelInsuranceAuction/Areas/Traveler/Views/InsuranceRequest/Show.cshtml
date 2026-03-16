@@ -55,7 +55,7 @@
                             <form asp-action="SelectOffer" method="post">
                                 <input type="hidden" name="offerId" value="@obj.Id" />
 
-                                <button type="submit" class="btn btn-success">
+                                <button type="submit" class="btn btn-success" onclick="return confirm('Da li ste sigurni da želite da izaberete ovu polisu?')">
                                     Izaberi ponudu
                                 </button>
                             </form>

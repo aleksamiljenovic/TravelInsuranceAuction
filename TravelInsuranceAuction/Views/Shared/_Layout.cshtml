@@ -101,5 +101,43 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="//cdn.datatables.net/2.3.7/js/dataTables.min.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    @if (User.IsInRole(SD.Role_Agency))
+    {
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+        <script>
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("/priceHub")
+                .build();
+
+            connection.start().then(function () {
+                connection.invoke("JoinAgencyGroup");
+            });
+
+            connection.on("AuctionStarted", function (auctionId, destination) {
+                const container = document.createElement("div");
+                container.innerHTML = `
+                    <div id="notif-${auctionId}"
+                         style="position:fixed; top:20px; right:20px; z-index:9999; min-width:320px;">
+                        <div class="alert alert-info alert-dismissible shadow-sm d-flex align-items-center gap-2">
+                            <i class="bi bi-hammer fs-5"></i>
+                            <div>
+                                <strong>Nova aukcija!</strong><br>
+                                <small>${destination} — aukcija je upravo počela.</small>
+                            </div>
+                            <button type="button" class="btn-close ms-auto"
+                                    onclick="this.closest('#notif-${auctionId}').remove()">
+                            </button>
+                        </div>
+                    </div>`;
+                document.body.appendChild(container);
+
+                setTimeout(() => {
+                    const el = document.getElementById("notif-" + auctionId);
+                    if (el) el.closest("div").remove();
+                }, 8000);
+            });
+        </script>
+    }
 </body>
 </html>

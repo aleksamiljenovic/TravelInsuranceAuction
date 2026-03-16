@@ -17,13 +17,10 @@
         <h3 class="text-success">Cena: @Model.Price €</h3>
 
         <form asp-action="ConfirmPayment" method="post">
-
             <input type="hidden" name="offerId" value="@Model.OfferId" />
-
-            <button type="submit" class="btn btn-success mt-3">
-                Plati
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="bi bi-file-earmark-pdf"></i> Potvrdi i preuzmi polisu
             </button>
-
         </form>
 
     </div>

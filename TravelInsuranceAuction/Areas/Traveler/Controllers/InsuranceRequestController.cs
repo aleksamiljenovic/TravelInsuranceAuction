@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -67,7 +68,7 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(InsuranceRequest obj)
+        public async Task<IActionResult> Create(InsuranceRequest obj)
         {
             if (obj.EndDate <= obj.StartDate)
             {
@@ -110,6 +111,8 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
                     }
 
                 }
+                await _hubContext.Clients.Group("Agencies")
+    .SendAsync("AuctionStarted", auction.Id, obj.Destination);
 
                 TempData["success"] = "Licitacija uspesno kreirana";
                 return RedirectToAction("Index");
@@ -208,6 +211,8 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
             
             await _hubContext.Clients.Group($"auction-{auction.Id}")
                 .SendAsync("AuctionFinished", offer.Id);
+
+
 
             return RedirectToAction("Payment", "Payment", new { offerId = offer.Id });
         }
