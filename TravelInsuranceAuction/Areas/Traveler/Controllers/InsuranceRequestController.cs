@@ -143,8 +143,7 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
                      .Where(u => u.AuctionId == auction.Id)
                      .ToList();
 
-                //var offers = _unitOfWork.Offer.Get(u => u.AuctionId == auction.Id);
-                //var agency = _unitOfWork.Agency.Get(u => u.Id == offers.AgencyId);
+                
 
                 var offersVM = offersList.Select(o =>
                 {
@@ -162,17 +161,11 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
                     };
                 }).ToList();
 
-                //var offersVM = offersList.Select(o => new OfferVM
-                //{
-                //    AgencyName = o.Agency != null ? o.Agency.Name : "Nepoznata agencija",
-                //    InitialPrice = o.InitialPrice,
-                //    CurrentPrice = o.CurrentPrice,
-                //    Conditions = o.Conditions,
-                //    AuctionId = o.AuctionId
-                //}).ToList();
+               
 
                 var model = new AuctionOffersVM
                 {
+                    AuctionId = auction.Id,
                     AuctionStartTime = auction?.StartTime,
                     AuctionEndTime = auction?.EndTime,
                     Destination = request?.Destination,
@@ -197,10 +190,7 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
             if (auction == null)
                 return NotFound();
 
-            //if (!auction.IsActive)
-            //{
-            //    return RedirectToAction("Bill", "Payment", new { offerId = offer.Id });
-            //}
+            
 
             var allOffers = _unitOfWork.Offer.GetAll().Where(o => o.AuctionId == auction.Id).ToList();
             foreach (var o in allOffers)
@@ -215,12 +205,32 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
             _unitOfWork.Auction.Update(auction);
             _unitOfWork.Save();
 
-            // SignalR obaveštava sve
+            
             await _hubContext.Clients.Group($"auction-{auction.Id}")
                 .SendAsync("AuctionFinished", offer.Id);
 
             return RedirectToAction("Payment", "Payment", new { offerId = offer.Id });
         }
+
+
+        [HttpPost]
+        public async Task<IActionResult> CancelAuction(int auctionId)
+        {
+            var auction = _unitOfWork.Auction.Get(a => a.Id == auctionId);
+            if (auction == null)
+                return NotFound();
+
+            auction.IsActive = false;
+            _unitOfWork.Auction.Update(auction);
+            _unitOfWork.Save();
+
+            await _hubContext.Clients.Group($"auction-{auction.Id}")
+                .SendAsync("AuctionFinished", 0);
+
+            return RedirectToAction("Index");
+        }
+
+      
 
 
     }
