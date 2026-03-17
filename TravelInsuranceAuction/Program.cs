@@ -20,6 +20,7 @@ builder.Services.AddHostedService<PriceDecreaseService>();
 builder.Services.AddScoped<PdfService>();
 
 
+
 builder.Services.AddIdentity<IdentityUser,IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -31,8 +32,13 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 
-
+builder.Services.AddScoped<DbInitializer>();
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var dbInitializer = scope.ServiceProvider.GetRequiredService<DbInitializer>();
+    dbInitializer.Initialize();
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -53,5 +59,6 @@ app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
     pattern: "{area=Traveler}/{controller=Home}/{action=Index}/{id?}");
+
 
 app.Run();

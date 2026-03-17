@@ -53,6 +53,39 @@ namespace TravelInsuranceAuction.Data
                 }
                 );
 
+            modelBuilder.Entity<AutoBiddingSetting>().HasData(
+                new AutoBiddingSetting
+                {
+                    Id = 1,
+                    DefaultStartPrice = 90,
+                    DefaultMinPrice = 50,
+                    LoweringTime = 20,
+                    PriceDecrease = 10,
+                    SpecialConditions = "Kašnjenje letova",
+                    AgencyId = 1
+                },
+                new AutoBiddingSetting
+                {
+                    Id = 2,
+                    DefaultStartPrice = 80,
+                    DefaultMinPrice = 40,
+                    LoweringTime = 30,
+                    PriceDecrease = 15,
+                    SpecialConditions = "",
+                    AgencyId = 2
+                },
+                 new AutoBiddingSetting
+                 {
+                     Id = 3,
+                     DefaultStartPrice = 75,
+                     DefaultMinPrice = 35,
+                     LoweringTime = 10,
+                     PriceDecrease = 5,
+                     SpecialConditions = "",
+                     AgencyId = 3
+                 }
+                );
+
         }
     }
 }
