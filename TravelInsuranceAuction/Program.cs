@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using TravelInsuranceAuction.Data;
+using TravelInsuranceAuction.Filters;
 using TravelInsuranceAuction.Hubs;
 using TravelInsuranceAuction.Repository;
 using TravelInsuranceAuction.Repository.IRepository;
@@ -31,8 +32,11 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
-
 builder.Services.AddScoped<DbInitializer>();
+builder.Services.AddScoped<InsuranceRequestService>();
+builder.Services.AddScoped<VerifiedAgencyFilter>();
+
+
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {

@@ -98,8 +98,8 @@ namespace TravelInsuranceAuction.Data
                     _userManager.AddToRoleAsync(traveler1, SD.Role_Traveler).GetAwaiter().GetResult();
                     _userManager.AddToRoleAsync(traveler2, SD.Role_Traveler).GetAwaiter().GetResult();
                     _userManager.AddToRoleAsync(agency1, SD.Role_Agency).GetAwaiter().GetResult();
-                    _userManager.AddToRoleAsync(agency1, SD.Role_Agency).GetAwaiter().GetResult();
-                    _userManager.AddToRoleAsync(agency1, SD.Role_Agency).GetAwaiter().GetResult();
+                    _userManager.AddToRoleAsync(agency2, SD.Role_Agency).GetAwaiter().GetResult();
+                    _userManager.AddToRoleAsync(agency3, SD.Role_Agency).GetAwaiter().GetResult();
             }
         }
     }

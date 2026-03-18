@@ -1,118 +1,108 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using TravelInsuranceAuction.Data;
+using TravelInsuranceAuction.Filters;
 using TravelInsuranceAuction.Models;
 using TravelInsuranceAuction.Repository.IRepository;
+using TravelInsuranceAuction.Utility;
 using TravelInsuranceAuction.ViewModels;
 
 namespace TravelInsuranceAuction.Areas.Agency.Controllers
 {
     [Area("Agency")]
+    [Authorize(Roles = SD.Role_Agency)]
+    [ServiceFilter(typeof(VerifiedAgencyFilter))]
     public class AuctionController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ApplicationDbContext _context;
 
-        public AuctionController(IUnitOfWork unitOfWork, ApplicationDbContext context)
+        public AuctionController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _context = context;
+        }
+
+        private ApplicationUser GetCurrentUser()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return _unitOfWork.ApplicationUser.Get(u => u.Id == userId, includeProperties: "Agency");
         }
 
         public IActionResult Index()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
-            if (user.IsVerified == false)
+            var user = GetCurrentUser();
+            
+
+            var model = _unitOfWork.Auction
+            .GetAll(includeProperties: "InsuranceRequest")
+            .Where(a => a.IsActive)
+            .OrderByDescending(a => a.StartTime)
+            .Select(a => new AuctionVM
             {
-                return RedirectToAction("NotVerified", "Home");
-            }
-            else
-            {
-                var auctions = _context.Auctions
-        .Where(a => a.IsActive)
-        .OrderByDescending(a => a.StartTime)
-        .Include(a => a.InsuranceRequest)
-        .ToList();
+                Destination = a.InsuranceRequest.Destination,
+                StartTime = a.StartTime,
+                EndTime = a.EndTime,
+            }).ToList();
 
-                var model = auctions.Select(a => new AuctionVM
-                {
-                    Destination = a.InsuranceRequest.Destination,
-                    StartTime = a.StartTime,
-                    EndTime = a.EndTime,
-                }).ToList();
-
-                return View(model);
-            }
-
-
-
+            return View(model);
         }
+
 
         public IActionResult ClosedAuctions()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
-            if (user.IsVerified == false)
-            {
-                return RedirectToAction("NotVerified", "Home");
-            }
-            else
-            {
-                var auctions = _context.Auctions
-        .Where(a => a.IsActive == false)
-        .OrderByDescending(a => a.StartTime)
-        .Include(a => a.InsuranceRequest)
-        .ToList();
+            var user = GetCurrentUser();
+      
 
-                var model = auctions.Select(a => new AuctionVM
+
+            var model = _unitOfWork.Auction
+                .GetAll(includeProperties: "InsuranceRequest")
+                .Where(a => a.IsActive == false)
+                .OrderByDescending(a => a.StartTime)
+                .Select(a => new AuctionVM
                 {
                     Destination = a.InsuranceRequest.Destination,
                     StartTime = a.StartTime,
                     EndTime = a.EndTime,
                 }).ToList();
 
-                return View(model);
-            }
+            return View(model);
 
-            
+
+
 
         }
         public IActionResult Statistics()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            var user = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
+            var user = GetCurrentUser();
             var agency = _unitOfWork.Agency.Get(a => a.Id == user.AgencyId);
+
             if (user == null || user.AgencyId == null)
                 return NotFound();
-            if (user.IsVerified == false)
+          
+
+
+            var offers = _unitOfWork.Offer
+            .GetAll()
+            .Where(o => o.AgencyId == user.AgencyId)
+            .ToList();
+
+            var wonOffers = offers.Where(o => o.isWinning == true).ToList();
+            var gross = wonOffers.Sum(o => o.CurrentPrice);
+
+            var model = new AgencyStatisticsVM
             {
-                return RedirectToAction("NotVerified", "Home");
-            }
-            else
-            {
-                var offers = _unitOfWork.Offer
-                .GetAll().Where(o => o.AgencyId == user.AgencyId)
-                .ToList();
-                var wonOffers = offers.Where(o => o.isWinning == true).ToList();
+                AgencyName = user.Agency?.Name ?? "N/A",
+                Won = offers.Count(o => o.isWinning == true),
+                Lost = offers.Count(o => o.isWinning == false),
+                Pending = offers.Count(o => o.isWinning == null),
+                GrossEarnings = gross,
+                PlatformFee = gross * 0.10,
+                TotalEarnings = gross * 0.90
+            };
 
+            return View(model);
 
-                var model = new AgencyStatisticsVM
-                {
-                    AgencyName = user.Agency?.Name ?? "N/A",
-                    Won = offers.Count(o => o.isWinning == true),
-                    Lost = offers.Count(o => o.isWinning == false),
-                    Pending = offers.Count(o => o.isWinning == null),
-                    GrossEarnings = wonOffers.Sum(o => o.CurrentPrice),
-                    PlatformFee = wonOffers.Sum(o => o.CurrentPrice) * 0.10,
-                    TotalEarnings = wonOffers.Sum(o => o.CurrentPrice) * 0.90
-
-                };
-
-                return View(model);
-            }
 
         }
 
