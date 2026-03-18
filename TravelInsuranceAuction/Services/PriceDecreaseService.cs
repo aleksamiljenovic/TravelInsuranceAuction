@@ -52,10 +52,10 @@ namespace TravelInsuranceAuction.Services
                             var timeSinceLast = DateTime.Now - offer.LastPriceDecrease.Value;
 
                             if (timeSinceLast.Minutes < autoBid.LoweringTime)
-                                continue; // još nije vreme za sledeće smanjenje
+                                continue;
 
 
-                            var newPrice = offer.CurrentPrice - autoBid.PriceDecrease;
+                            var newPrice = offer.CurrentPrice - (offer.CurrentPrice * autoBid.PriceDecrease / 100);
 
                             offer.LastPriceDecrease = DateTime.Now;
                             if (newPrice >= autoBid.DefaultMinPrice)

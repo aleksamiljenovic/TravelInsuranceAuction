@@ -8,7 +8,6 @@ using TravelInsuranceAuction.Repository.IRepository;
 namespace TravelInsuranceAuction.Areas.Agency.Controllers
 {
     [Area("Agency")]
-    [ServiceFilter(typeof(VerifiedAgencyFilter))]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

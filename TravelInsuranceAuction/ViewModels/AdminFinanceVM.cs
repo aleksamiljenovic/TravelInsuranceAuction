@@ -1,4 +1,4 @@
-﻿namespace TravelInsuranceAuction.Models
+﻿namespace TravelInsuranceAuction.ViewModels
 {
     public class AdminFinanceVM
     {

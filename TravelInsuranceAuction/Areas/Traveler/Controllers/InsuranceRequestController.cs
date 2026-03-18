@@ -20,15 +20,11 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
     public class InsuranceRequestController : Controller
     {
 
-
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IHubContext<PriceHub> _hubContext;
         private readonly InsuranceRequestService _service;
 
-        public InsuranceRequestController(IUnitOfWork unitOfWork, IHubContext<PriceHub> hubContext, InsuranceRequestService service)
+        public InsuranceRequestController(InsuranceRequestService service)
         {
-            _unitOfWork = unitOfWork;
-            _hubContext = hubContext;
+
             _service = service;
         }
 
@@ -56,7 +52,6 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
 
         public IActionResult Create()
         {
-
             return View();
         }
 
@@ -71,7 +66,7 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
             if (ModelState.IsValid && userId != null)
             {
                 await _service.CreateAuction(obj, userId);
-                TempData["success"] = "Licitacija uspesno kreirana";
+                TempData["success"] = "Aukcija uspesno kreirana";
                 return RedirectToAction("Index");
             }
 
@@ -80,7 +75,6 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
 
         public IActionResult Show(int id)
         {
-
             var model = _service.GetAuctionOffers(id);
             if (model == null) return NotFound();
             return View(model);
@@ -94,7 +88,6 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
             var offer = _service.SelectOffer(offerId);
             return RedirectToAction("Payment", "Payment", new { offerId });
         }
-
 
         [HttpPost]
         public async Task<IActionResult> CancelAuction(int auctionId)

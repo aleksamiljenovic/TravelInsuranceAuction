@@ -9,9 +9,9 @@ namespace TravelInsuranceAuction.Models
         [Key]
         public int Id { get; set; }
         public double? InitialPrice { get; set; }
-        public double CurrentPrice { get; set; } //double?
+        public double CurrentPrice { get; set; } 
         public string? Conditions { get; set; }
-        public DateTime? LastPriceDecrease { get; set; } //= DateTime.MinValue;
+        public DateTime? LastPriceDecrease { get; set; } 
         public bool? isWinning { get; set; }
         public int? AgencyId { get; set; }
         [ForeignKey("AgencyId")]
