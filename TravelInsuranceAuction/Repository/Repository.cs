@@ -19,7 +19,6 @@ namespace TravelInsuranceAuction.Repository
         {
             dbSet.Add(entity);
         }
-
         public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
         {
             IQueryable<T> query = dbSet;
@@ -32,10 +31,8 @@ namespace TravelInsuranceAuction.Repository
                     query = query.Include(property);
                 }
             }
-
             return query.FirstOrDefault();
         }
-
         public IEnumerable<T> GetAll(string? includeProperties = null)
         {
             IQueryable<T> query = dbSet;
@@ -47,16 +44,12 @@ namespace TravelInsuranceAuction.Repository
                     query = query.Include(property);
                 }
             }
-
             return query.ToList();
-
         }
-
         public void Remove(T entity)
         {
             dbSet.Remove(entity);
         }
-
         public void RemoveRange(IEnumerable<T> entity)
         {
             dbSet.RemoveRange(entity);

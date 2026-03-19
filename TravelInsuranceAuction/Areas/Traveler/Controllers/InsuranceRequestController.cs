@@ -24,12 +24,8 @@ namespace TravelInsuranceAuction.Areas.Traveler.Controllers
 
         public InsuranceRequestController(InsuranceRequestService service)
         {
-
             _service = service;
         }
-
-
-
         public IActionResult Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
